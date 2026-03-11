@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop — 121212 GBM</title>
+  <meta name="description" content="Browse thousands of products from Black-owned businesses across the global diaspora." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .shop-hero {
+      background: linear-gradient(135deg, var(--black) 0%, var(--black-mid) 100%);
+      padding: 80px 2rem 56px;
+      margin-top: 60px;
+      text-align: center;
+      color: var(--white);
+    }
+    .shop-hero h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      margin-bottom: 1.5rem;
+    }
+    .shop-hero h1 span { color: var(--red); }
+
+    /* Search bar */
+    .search-bar {
+      max-width: 620px;
+      margin: 0 auto;
+      display: flex;
+      background: var(--white);
+      border-radius: 50px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .search-bar input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 1rem 1.5rem;
+      font-size: 1rem;
+      font-family: inherit;
+      color: var(--black);
+    }
+    .search-bar button {
+      background: var(--red);
+      color: var(--white);
+      border: none;
+      padding: 1rem 2rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: background 0.2s;
+      border-radius: 0 50px 50px 0;
+    }
+    .search-bar button:hover { background: var(--red-dark); }
+
+    /* Category pills */
+    .category-pills {
+      background: var(--white);
+      border-bottom: 1px solid #eee;
+      padding: 1rem 2rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+    .category-pills::-webkit-scrollbar { height: 3px; }
+    .category-pills::-webkit-scrollbar-thumb { background: var(--red); border-radius: 2px; }
+    .pills-inner {
+      display: flex;
+      gap: 0.75rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .pill {
+      padding: 0.5rem 1.2rem;
+      border-radius: 50px;
+      border: 1.5px solid #ddd;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      background: var(--white);
+      color: var(--black-mid);
+    }
+    .pill:hover, .pill.active {
+      background: var(--red);
+      border-color: var(--red);
+      color: var(--white);
+    }
+
+    /* Main layout */
+    .shop-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2rem;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+      align-items: start;
+    }
+
+    /* Sidebar filters */
+    .sidebar {
+      background: var(--white);
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: sticky;
+      top: 80px;
+    }
+    .filter-section { margin-bottom: 2rem; }
+    .filter-section:last-child { margin-bottom: 0; }
+    .filter-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--gray);
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #eee;
+    }
+    .filter-options { display: flex; flex-direction: column; gap: 8px; }
+    .filter-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--black-mid);
+    }
+    .filter-option input { accent-color: var(--red); cursor: pointer; }
+    .filter-option span { font-size: 0.8rem; color: var(--gray); margin-left: auto; }
+    .price-range {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .price-input {
+      flex: 1;
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      padding: 7px 10px;
+      font-size: 0.85rem;
+      outline: none;
+      font-family: inherit;
+    }
+    .price-input:focus { border-color: var(--red); }
+    .price-sep { color: var(--gray); font-size: 0.8rem; }
+
+    /* Product grid */
+    .products-area { }
+    .products-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .products-count { font-size: 0.9rem; color: var(--gray); }
+    .products-count strong { color: var(--black); }
+    .sort-select {
+      border: 1.5px solid #ddd;
+      border-radius: 6px;
+      padding: 7px 12px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #eee;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.12);
+    }
+    .product-image {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      display: block;
+      background: var(--light);
+    }
+    .product-info { padding: 1rem; }
+    .product-vendor {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 4px;
+    }
+    .product-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+    .product-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .product-price {
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: var(--black);
+    }
+    .product-rating {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+    .product-tag {
+      display: inline-block;
+      background: rgba(45,95,63,0.1);
+      color: var(--green);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 50px;
+      margin-top: 6px;
+    }
+
+    .load-more-wrap { text-align: center; margin-top: 3rem; }
+
+    @media (max-width: 1024px) {
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .shop-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 480px) {
+      .products-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <nav id="mainNav">
+    <div class="nav-content">
+      <a href="index.html" class="logo">GBM</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="vendors.html">Vendors</a></li>
+        <li><a href="sell.html">Start Selling</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="sell.html" class="nav-cta">Join Now</a></li>
+      </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero + Search -->
+  <div class="shop-hero">
+    <h1>Shop the <span>Culture</span></h1>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search products, vendors, or categories..." />
+      <button onclick="handleSearch()">Search</button>
+    </div>
+  </div>
+
+  <!-- Category Pills -->
+  <div class="category-pills">
+    <div class="pills-inner" id="pillsBar">
+      <button class="pill active" data-cat="all">All</button>
+      <button class="pill" data-cat="fashion">👕 Fashion</button>
+      <button class="pill" data-cat="jewelry">💎 Jewelry</button>
+      <button class="pill" data-cat="wellness">🧴 Wellness</button>
+      <button class="pill" data-cat="art">🎨 Art</button>
+      <button class="pill" data-cat="food">☕ Food</button>
+      <button class="pill" data-cat="home">🏠 Home</button>
+      <button class="pill" data-cat="music">🎵 Music Merch</button>
+      <button class="pill" data-cat="books">📚 Books & Courses</button>
+    </div>
+  </div>
+
+  <!-- Shop Layout -->
+  <div class="shop-layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <div class="filter-section">
+        <div class="filter-title">Price Range</div>
+        <div class="price-range">
+          <input class="price-input" type="number" placeholder="Min" min="0" />
+          <span class="price-sep">—</span>
+          <input class="price-input" type="number" placeholder="Max" min="0" />
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">Vendor Country</div>
+        <div class="filter-options">
+          <label class="filter-option"><input type="checkbox" /> USA <span>312</span></label>
+          <label class="filter-option"><input type="checkbox" /> Nigeria <span>204</span></label>
+          <label class="filter-option"><input type="checkbox" /> Ghana <span>178</span></label>
+          <label class="filter-option"><input type="checkbox" /> Jamaica <span>143</span></label>
+          <label class="filter-option"><input type="checkbox" /> UK <span>119</span></label>
+          <label class="filter-option"><input type="checkbox" /> South Africa <span>98</span></label>
+          <label class="filter-option"><input type="checkbox" /> Canada <span>87</span></label>
+          <label class="filter-option"><input type="checkbox" /> Other</label>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">Vendor Status</div>
+        <div class="filter-options">
+          <label class="filter-option"><input type="checkbox" /> GBM Verified</label>
+          <label class="filter-option"><input type="checkbox" /> Mogul Seller</label>
+          <label class="filter-option"><input type="checkbox" /> New Arrivals</label>
+        </div>
+      </div>
+
+      <div class="filter-section">
+        <div class="filter-title">Rating</div>
+        <div class="filter-options">
+          <label class="filter-option"><input type="radio" name="rating" /> ⭐⭐⭐⭐⭐ 5.0</label>
+          <label class="filter-option"><input type="radio" name="rating" /> ⭐⭐⭐⭐ 4.0+</label>
+          <label class="filter-option"><input type="radio" name="rating" /> ⭐⭐⭐ 3.0+</label>
+          <label class="filter-option"><input type="radio" name="rating" checked /> Any</label>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Products -->
+    <div class="products-area">
+      <div class="products-toolbar">
+        <p class="products-count">Showing <strong id="productCount">24</strong> products</p>
+        <select class="sort-select" id="sortSelect">
+          <option>Featured</option>
+          <option>Newest</option>
+          <option>Price: Low to High</option>
+          <option>Price: High to Low</option>
+          <option>Best Rated</option>
+          <option>Best Selling</option>
+        </select>
+      </div>
+
+      <div class="products-grid" id="productsGrid">
+
+        <div class="product-card" data-cat="wellness">
+          <img src="https://images.unsplash.com/photo-1556228578-8c89e6adf883?w=400&h=400&fit=crop" alt="Shea Body Butter" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Sankofa Soap</div>
+            <div class="product-name">Raw Shea Body Butter</div>
+            <div class="product-meta">
+              <span class="product-price">$24.99</span>
+              <span class="product-rating">⭐ 4.8</span>
+            </div>
+            <span class="product-tag">🇬🇭 Ghana</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="fashion">
+          <img src="https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?w=400&h=400&fit=crop" alt="Ankara Print Shirt" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Kareea Design</div>
+            <div class="product-name">Ankara Print Button Shirt</div>
+            <div class="product-meta">
+              <span class="product-price">$65.00</span>
+              <span class="product-rating">⭐ 4.7</span>
+            </div>
+            <span class="product-tag">🇯🇲 Jamaica</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="jewelry">
+          <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&h=400&fit=crop" alt="Gold Vermeil Necklace" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Effie's Boutique</div>
+            <div class="product-name">18K Gold Vermeil Pendant</div>
+            <div class="product-meta">
+              <span class="product-price">$89.00</span>
+              <span class="product-rating">⭐ 5.0</span>
+            </div>
+            <span class="product-tag">🇦🇴 Angola</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="art">
+          <img src="https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=400&h=400&fit=crop" alt="Afro Art Print" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Bold Dreams</div>
+            <div class="product-name">Diaspora Portrait — Print</div>
+            <div class="product-meta">
+              <span class="product-price">$45.00</span>
+              <span class="product-rating">⭐ 4.9</span>
+            </div>
+            <span class="product-tag">🇺🇸 USA</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="food">
+          <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=400&h=400&fit=crop" alt="Ethiopian Coffee" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Abyssinia Roasters</div>
+            <div class="product-name">Ethiopian Single-Origin Coffee</div>
+            <div class="product-meta">
+              <span class="product-price">$18.00</span>
+              <span class="product-rating">⭐ 4.9</span>
+            </div>
+            <span class="product-tag">🇪🇹 Ethiopia</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="wellness">
+          <img src="https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?w=400&h=400&fit=crop" alt="Hair Growth Oil" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Crown & Root</div>
+            <div class="product-name">Natural Hair Growth Oil</div>
+            <div class="product-meta">
+              <span class="product-price">$32.00</span>
+              <span class="product-rating">⭐ 4.6</span>
+            </div>
+            <span class="product-tag">🇬🇧 UK</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="home">
+          <img src="https://images.unsplash.com/photo-1602028915047-37269d1a73f7?w=400&h=400&fit=crop" alt="Kente Throw Pillow" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Asante Home</div>
+            <div class="product-name">Kente Weave Throw Pillow</div>
+            <div class="product-meta">
+              <span class="product-price">$38.00</span>
+              <span class="product-rating">⭐ 4.8</span>
+            </div>
+            <span class="product-tag">🇬🇭 Ghana</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="books">
+          <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&h=400&fit=crop" alt="Business Course" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Build Black</div>
+            <div class="product-name">Black Entrepreneurship 101 — Course</div>
+            <div class="product-meta">
+              <span class="product-price">$97.00</span>
+              <span class="product-rating">⭐ 5.0</span>
+            </div>
+            <span class="product-tag">🇺🇸 USA</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="fashion">
+          <img src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?w=400&h=400&fit=crop" alt="Dashiki Set" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Nairobi Threads</div>
+            <div class="product-name">Premium Dashiki Set</div>
+            <div class="product-meta">
+              <span class="product-price">$78.00</span>
+              <span class="product-rating">⭐ 4.7</span>
+            </div>
+            <span class="product-tag">🇰🇪 Kenya</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="jewelry">
+          <img src="https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?w=400&h=400&fit=crop" alt="Beaded Bracelet" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Maasai Market</div>
+            <div class="product-name">Handwoven Beaded Bracelet Set</div>
+            <div class="product-meta">
+              <span class="product-price">$22.00</span>
+              <span class="product-rating">⭐ 4.9</span>
+            </div>
+            <span class="product-tag">🇹🇿 Tanzania</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="music">
+          <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop" alt="Music Merch" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Riddim Republic</div>
+            <div class="product-name">Vintage Reggae Graphic Tee</div>
+            <div class="product-meta">
+              <span class="product-price">$35.00</span>
+              <span class="product-rating">⭐ 4.8</span>
+            </div>
+            <span class="product-tag">🇯🇲 Jamaica</span>
+          </div>
+        </div>
+
+        <div class="product-card" data-cat="wellness">
+          <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=400&fit=crop" alt="Herbal Tea" class="product-image" />
+          <div class="product-info">
+            <div class="product-vendor">Roots Apothecary</div>
+            <div class="product-name">West African Herbal Tea Blend</div>
+            <div class="product-meta">
+              <span class="product-price">$16.00</span>
+              <span class="product-rating">⭐ 4.7</span>
+            </div>
+            <span class="product-tag">🇸🇳 Senegal</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="load-more-wrap">
+        <button class="btn btn-primary" id="loadMoreBtn">Load More Products</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 121212 GBM — The Global Black Marketplace. All rights reserved.</p>
+    <p style="margin-top:6px;">
+      <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
+      <a href="#">Terms of Use</a> &nbsp;·&nbsp;
+      <a href="#">Seller Agreement</a>
+    </p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // Category pill filter
+    const pills = document.querySelectorAll('.pill');
+    const cards = document.querySelectorAll('.product-card');
+    const countEl = document.getElementById('productCount');
+
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        pills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const cat = pill.dataset.cat;
+        let visible = 0;
+        cards.forEach(card => {
+          const show = cat === 'all' || card.dataset.cat === cat;
+          card.style.display = show ? '' : 'none';
+          if (show) visible++;
+        });
+        countEl.textContent = visible;
+      });
+    });
+
+    function handleSearch() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      let visible = 0;
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        const show = !q || text.includes(q);
+        card.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      countEl.textContent = visible;
+      // Reset pills
+      pills.forEach(p => p.classList.remove('active'));
+      document.querySelector('[data-cat="all"]').classList.add('active');
+    }
+
+    document.getElementById('searchInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleSearch();
+    });
+  </script>
+</body>
+</html>

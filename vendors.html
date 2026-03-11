@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vendor Directory — 121212 GBM</title>
+  <meta name="description" content="Explore verified Black-owned businesses from across the global diaspora. Shop direct from the source." />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* ── Vendor Directory Hero ── */
+    .vendors-hero {
+      background: linear-gradient(135deg, var(--black) 0%, #0d1f14 100%);
+      padding: 80px 2rem 56px;
+      margin-top: 60px;
+      text-align: center;
+      color: var(--white);
+    }
+    .vendors-hero h1 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900;
+      margin-bottom: 1.2rem;
+    }
+    .vendors-hero h1 span { color: var(--red); }
+    .vendors-hero p {
+      color: rgba(255,255,255,0.65);
+      font-size: 1.05rem;
+      max-width: 520px;
+      margin: 0 auto 2rem;
+      line-height: 1.7;
+    }
+
+    /* ── Search bar ── */
+    .vendor-search-wrap {
+      max-width: 580px;
+      margin: 0 auto;
+      display: flex;
+      background: var(--white);
+      border-radius: 50px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .vendor-search-wrap input {
+      flex: 1;
+      padding: 0.9rem 1.4rem;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      font-family: inherit;
+      background: transparent;
+    }
+    .vendor-search-wrap button {
+      padding: 0.9rem 1.6rem;
+      background: var(--red);
+      border: none;
+      color: var(--white);
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.95rem;
+      transition: background 0.2s;
+    }
+    .vendor-search-wrap button:hover { background: var(--red-dark); }
+
+    /* ── Filter bar ── */
+    .vendor-filters-bar {
+      background: var(--white);
+      border-bottom: 1px solid #e8e2d8;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      position: sticky;
+      top: 60px;
+      z-index: 50;
+    }
+    .filter-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #888;
+      margin-right: 0.25rem;
+    }
+    .filter-pill {
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      border: 1.5px solid #ddd;
+      background: transparent;
+      font-size: 0.85rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--black);
+    }
+    .filter-pill:hover { border-color: var(--red); color: var(--red); }
+    .filter-pill.active { background: var(--red); border-color: var(--red); color: var(--white); }
+
+    /* ── Directory layout ── */
+    .directory-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+    .directory-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .directory-meta-count {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .directory-meta-count strong { color: var(--black); }
+    .sort-select {
+      padding: 0.5rem 1rem;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      outline: none;
+    }
+    .sort-select:focus { border-color: var(--red); }
+
+    /* ── Vendor cards grid ── */
+    .vendors-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+    .vdir-card {
+      background: var(--white);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      transition: transform 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+    }
+    .vdir-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 28px rgba(0,0,0,0.12);
+      border-color: var(--red);
+    }
+    .vdir-card-header {
+      position: relative;
+      height: 120px;
+      overflow: hidden;
+    }
+    .vdir-card-banner {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .vdir-card-banner-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--green) 0%, #1a3d27 100%);
+    }
+    .vdir-card-banner-placeholder.red-bg {
+      background: linear-gradient(135deg, var(--red-dark) 0%, #3a0010 100%);
+    }
+    .vdir-card-banner-placeholder.tan-bg {
+      background: linear-gradient(135deg, #8b6914 0%, #5a4208 100%);
+    }
+    .vdir-avatar-wrap {
+      position: absolute;
+      bottom: -28px;
+      left: 1.2rem;
+    }
+    .vdir-avatar {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 3px solid var(--white);
+      object-fit: cover;
+      display: block;
+      background: #ddd;
+    }
+    .vdir-badge-check {
+      position: absolute;
+      bottom: -28px;
+      left: calc(1.2rem + 40px);
+      background: var(--green);
+      color: var(--white);
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 50px;
+      border: 2px solid var(--white);
+      white-space: nowrap;
+    }
+    .vdir-card-body {
+      padding: 2.2rem 1.2rem 1.2rem;
+    }
+    .vdir-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--black);
+      margin-bottom: 0.2rem;
+    }
+    .vdir-location {
+      font-size: 0.82rem;
+      color: #888;
+      margin-bottom: 0.6rem;
+    }
+    .vdir-category {
+      display: inline-block;
+      background: var(--tan);
+      color: #5a3e00;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      border-radius: 50px;
+      margin-bottom: 0.9rem;
+    }
+    .vdir-desc {
+      font-size: 0.85rem;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .vdir-stats-row {
+      display: flex;
+      gap: 1.2rem;
+      font-size: 0.8rem;
+      color: #666;
+      border-top: 1px solid #f0ede8;
+      padding-top: 0.8rem;
+    }
+    .vdir-stat span {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--black);
+    }
+    .vdir-tier {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+    }
+    .tier-badge {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 50px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .tier-griot { background: #f0ede8; color: #888; }
+    .tier-merchant { background: #e8f0ff; color: #2a5ce8; }
+    .tier-mogul { background: #fff7e0; color: #a07800; }
+
+    /* ── No-results state ── */
+    .no-results {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #999;
+    }
+    .no-results .no-results-icon { font-size: 3rem; margin-bottom: 1rem; }
+
+    /* ── Load more ── */
+    .load-more-wrap {
+      text-align: center;
+      margin-top: 3rem;
+    }
+    .btn-load-more {
+      padding: 0.8rem 2.5rem;
+      border: 2px solid var(--red);
+      background: transparent;
+      color: var(--red);
+      font-size: 0.95rem;
+      font-weight: 700;
+      font-family: inherit;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-load-more:hover { background: var(--red); color: var(--white); }
+
+    /* ── Become a vendor CTA ── */
+    .become-vendor-cta {
+      background: linear-gradient(135deg, var(--black) 0%, #2a0a12 100%);
+      color: var(--white);
+      text-align: center;
+      padding: 4rem 2rem;
+    }
+    .become-vendor-cta h2 {
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 900;
+      margin-bottom: 0.8rem;
+    }
+    .become-vendor-cta h2 span { color: var(--red); }
+    .become-vendor-cta p {
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 2rem;
+      font-size: 1.05rem;
+    }
+
+    @media (max-width: 640px) {
+      .vendor-filters-bar { top: 56px; gap: 0.5rem; }
+      .vendors-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 420px) {
+      .vendors-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll Progress Bar -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- ── Navigation ── -->
+  <nav id="mainNav">
+    <div class="nav-content">
+      <a href="index.html" class="logo">GBM</a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="shop.html">Shop</a></li>
+        <li><a href="vendors.html" class="nav-active">Vendors</a></li>
+        <li><a href="sell.html">Start Selling</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="sell.html" class="nav-cta">Join Now</a></li>
+      </ul>
+      <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <div class="vendors-hero">
+    <h1>The <span>Vendor</span> Directory</h1>
+    <p>Explore verified Black-owned businesses from across the diaspora. Every store is a story.</p>
+    <div class="vendor-search-wrap">
+      <input type="search" id="vendorSearch" placeholder="Search vendors, categories, locations…" aria-label="Search vendors" />
+      <button onclick="runSearch()">Search</button>
+    </div>
+  </div>
+
+  <!-- ── Filter bar ── -->
+  <div class="vendor-filters-bar" id="filterBar">
+    <span class="filter-label">Filter:</span>
+    <button class="filter-pill active" data-cat="all">All</button>
+    <button class="filter-pill" data-cat="Fashion">Fashion</button>
+    <button class="filter-pill" data-cat="Jewelry">Jewelry</button>
+    <button class="filter-pill" data-cat="Wellness">Wellness</button>
+    <button class="filter-pill" data-cat="Art">Art</button>
+    <button class="filter-pill" data-cat="Food">Food &amp; Drink</button>
+    <button class="filter-pill" data-cat="Home">Home &amp; Living</button>
+    <button class="filter-pill" data-cat="Books">Books &amp; Courses</button>
+    <button class="filter-pill" data-cat="Music">Music Merch</button>
+  </div>
+
+  <!-- ── Directory ── -->
+  <div class="directory-layout">
+    <div class="directory-meta">
+      <p class="directory-meta-count">Showing <strong id="vendorCount">18</strong> vendors</p>
+      <select class="sort-select" id="sortSelect">
+        <option value="featured">Sort: Featured</option>
+        <option value="rating">Highest Rated</option>
+        <option value="sales">Most Sales</option>
+        <option value="newest">Newest</option>
+      </select>
+    </div>
+
+    <div class="vendors-grid" id="vendorsGrid">
+      <!-- Populated by JS -->
+    </div>
+
+    <div class="load-more-wrap" id="loadMoreWrap">
+      <button class="btn-load-more" id="loadMoreBtn">Load More Vendors</button>
+    </div>
+  </div>
+
+  <!-- ── Become a Vendor CTA ── -->
+  <div class="become-vendor-cta">
+    <h2>Don't see your business? <span>Join Us.</span></h2>
+    <p>Start selling to a global community of conscious buyers.</p>
+    <a href="sell.html" class="btn btn-primary">Create Your Storefront</a>
+  </div>
+
+  <!-- ── Footer ── -->
+  <footer>
+    <p>&copy; 2026 121212 GBM — The Global Black Marketplace. All rights reserved.</p>
+    <p style="margin-top: 6px;">
+      <a href="#">Privacy Policy</a> &nbsp;·&nbsp;
+      <a href="#">Terms of Use</a> &nbsp;·&nbsp;
+      <a href="sell.html">Seller Agreement</a>
+    </p>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    /* ── Vendor data ── */
+    const VENDORS = [
+      {
+        id: 1,
+        name: "Sankofa Soap",
+        location: "🇬🇭 Ghana",
+        category: "Wellness",
+        desc: "Handcrafted African black soap, shea butters, and wellness oils rooted in traditional Ghanaian recipes.",
+        avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&h=100&fit=crop&crop=faces",
+        banner: "green",
+        products: 248, rating: 4.8, sales: "1.2K",
+        tier: "Merchant", verified: true, featured: true
+      },
+      {
+        id: 2,
+        name: "Bold Dreams",
+        location: "🇺🇸 USA",
+        category: "Fashion",
+        desc: "Streetwear celebrating Black excellence — limited drops, bold graphics, unapologetic style.",
+        avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=faces",
+        banner: "red",
+        products: 89, rating: 4.9, sales: "856",
+        tier: "Merchant", verified: true, featured: true
+      },
+      {
+        id: 3,
+        name: "Effie's Boutique",
+        location: "🇦🇴 Angola",
+        category: "Fashion",
+        desc: "Afrocentric fashion blending Angolan heritage with contemporary silhouettes. Every piece tells a story.",
+        avatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100&h=100&fit=crop&crop=faces",
+        banner: "tan",
+        products: 412, rating: 5.0, sales: "3.4K",
+        tier: "Mogul", verified: true, featured: true
+      },
+      {
+        id: 4,
+        name: "Kareea Design",
+        location: "🇯🇲 Jamaica",
+        category: "Jewelry",
+        desc: "Hand-poured resin jewelry infused with Caribbean color. Wearable art for the bold and beautiful.",
+        avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop&crop=faces",
+        banner: "green",
+        products: 156, rating: 4.7, sales: "2.1K",
+        tier: "Merchant", verified: true, featured: true
+      },
+      {
+        id: 5,
+        name: "Roots & Rhythm",
+        location: "🇳🇬 Nigeria",
+        category: "Music",
+        desc: "Afrobeat artist merch, vinyl, and exclusive music drops. Support the sound of the diaspora.",
+        avatar: "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?w=100&h=100&fit=crop&crop=faces",
+        banner: "red",
+        products: 34, rating: 4.6, sales: "420",
+        tier: "Griot", verified: true, featured: false
+      },
+      {
+        id: 6,
+        name: "Mama Coton",
+        location: "🇸🇳 Senegal",
+        category: "Home",
+        desc: "Hand-woven baskets, textiles, and home décor from Senegal's finest artisan cooperatives.",
+        avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop&crop=faces",
+        banner: "tan",
+        products: 203, rating: 4.8, sales: "1.7K",
+        tier: "Merchant", verified: true, featured: false
+      },
+      {
+        id: 7,
+        name: "Melanin Kitchen",
+        location: "🇧🇧 Barbados",
+        category: "Food",
+        desc: "Caribbean hot sauces, jerk seasonings, and rum cakes. Bring the islands to your table.",
+        avatar: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=100&h=100&fit=crop&crop=faces",
+        banner: "green",
+        products: 27, rating: 4.5, sales: "312",
+        tier: "Griot", verified: false, featured: false
+      },
+      {
+        id: 8,
+        name: "Cipher Gallery",
+        location: "🇿🇦 South Africa",
+        category: "Art",
+        desc: "Original paintings, prints, and digital art from Cape Town's emerging Black art scene.",
+        avatar: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&h=100&fit=crop&crop=faces",
+        banner: "red",
+        products: 78, rating: 4.9, sales: "633",
+        tier: "Merchant", verified: true, featured: false
+      },
+      {
+        id: 9,
+        name: "Crowned Reads",
+        location: "🇬🇧 UK",
+        category: "Books",
+        desc: "Black literature, self-development courses, and mentorship guides for the modern renaissance.",
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=faces",
+        banner: "tan",
+        products: 55, rating: 4.7, sales: "980",
+        tier: "Merchant", verified: true, featured: false
+      },
+      {
+        id: 10,
+        name: "Ori Naturals",
+        location: "🇧🇷 Brazil",
+        category: "Wellness",
+        desc: "Ayurvedic-African hair care from Brazil's Afro-Brazilian wellness tradition. For curls, coils, and kinks.",
+        avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=faces",
+        banner: "green",
+        products: 91, rating: 4.8, sales: "1.4K",
+        tier: "Merchant", verified: true, featured: false
+      },
+      {
+        id: 11,
+        name: "Lusaka Threads",
+        location: "🇿🇲 Zambia",
+        category: "Fashion",
+        desc: "Contemporary Zambian fashion fusing chitenge fabric with modern cuts. Shipped worldwide.",
+        avatar: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?w=100&h=100&fit=crop&crop=faces",
+        banner: "red",
+        products: 134, rating: 4.6, sales: "879",
+        tier: "Merchant", verified: true, featured: false
+      },
+      {
+        id: 12,
+        name: "Joie de Vivre",
+        location: "🇭🇹 Haiti",
+        category: "Art",
+        desc: "Haitian metal art, papier-mâché, and paintings celebrating the world's first Black republic.",
+        avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=faces",
+        banner: "tan",
+        products: 67, rating: 4.9, sales: "541",
+        tier: "Griot", verified: false, featured: false
+      },
+      {
+        id: 13,
+        name: "Soweto Kicks",
+        location: "🇿🇦 South Africa",
+        category: "Fashion",
+        desc: "Custom-painted sneakers and streetwear rooted in Soweto's legendary style culture.",
+        avatar: "https://images.unsplash.com/photo-1463453091185-61582044d556?w=100&h=100&fit=crop&crop=faces",
+        banner: "green",
+        products: 42, rating: 4.7, sales: "728",
+        tier: "Griot", verified: true, featured: false
+      },
+      {
+        id: 14,
+        name: "Diaspora Spice Co.",
+        location: "🇹🇹 Trinidad",
+        category: "Food",
+        desc: "Authentic Trinidadian seasonings, pepper sauces, and rubs. Flavor from the twin islands.",
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&h=100&fit=crop&crop=faces",
+        banner: "red",
+        products: 19, rating: 4.5, sales: "267",
+        tier: "Griot", verified: false, featured: false
+      },
+      {
+        id: 15,
+        name: "Ebony Bloom",
+        location: "🇺🇸 USA",
+        category: "Wellness",
+        desc: "Luxury candles, bath salts, and self-care rituals crafted for women of color.",
+        avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=100&h=100&fit=crop&crop=faces",
+        banner: "tan",
+        products: 113, rating: 4.9, sales: "2.3K",
+        tier: "Mogul", verified: true, featured: false
+      },
+      {
+        id: 16,
+        name: "Accra Gold",
+        location: "🇬🇭 Ghana",
+        category: "Jewelry",
+        desc: "18k gold and Akan bead jewelry handcrafted by master goldsmiths in Accra's historic center.",
+        avatar: "https://images.unsplash.com/photo-1552374196-c4e7ffc6e126?w=100&h=100&fit=crop&crop=faces",
+        banner: "green",
+        products: 189, rating: 5.0, sales: "4.1K",
+        tier: "Mogul", verified: true, featured: false
+      },
+      {
+        id: 17,
+        name: "Nairobi Modern",
+        location: "🇰🇪 Kenya",
+        category: "Home",
+        desc: "Kenyan interior design accessories, sisal rugs, and hand-carved furniture for the modern home.",
+        avatar: "https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=100&h=100&fit=crop&crop=faces",
+        banner: "red",
+        products: 76, rating: 4.6, sales: "594",
+        tier: "Merchant", verified: true, featured: false
+      },
+      {
+        id: 18,
+        name: "Third Eye Ink",
+        location: "🇨🇦 Canada",
+        category: "Books",
+        desc: "Metaphysical books, consciousness courses, and journals for the awakening Black mind.",
+        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop&crop=faces",
+        banner: "tan",
+        products: 38, rating: 4.8, sales: "712",
+        tier: "Merchant", verified: true, featured: false
+      }
+    ];
+
+    const BANNER_CLASSES = { green: '', red: 'red-bg', tan: 'tan-bg' };
+    const TIER_CLASSES = { Griot: 'tier-griot', Merchant: 'tier-merchant', Mogul: 'tier-mogul' };
+
+    let activeCategory = 'all';
+    let searchQuery = '';
+    let visibleCount = 12;
+
+    function renderVendors() {
+      const grid = document.getElementById('vendorsGrid');
+      const filtered = VENDORS.filter(v => {
+        const matchCat = activeCategory === 'all' || v.category === activeCategory;
+        const q = searchQuery.toLowerCase();
+        const matchSearch = !q || v.name.toLowerCase().includes(q)
+          || v.location.toLowerCase().includes(q)
+          || v.category.toLowerCase().includes(q)
+          || v.desc.toLowerCase().includes(q);
+        return matchCat && matchSearch;
+      });
+
+      // Sort
+      const sort = document.getElementById('sortSelect').value;
+      if (sort === 'rating') filtered.sort((a,b) => b.rating - a.rating);
+      else if (sort === 'newest') filtered.sort((a,b) => b.id - a.id);
+      else if (sort === 'sales') filtered.sort((a,b) => parseFloat(b.sales) - parseFloat(a.sales));
+      else filtered.sort((a,b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+
+      document.getElementById('vendorCount').textContent = filtered.length;
+      const show = filtered.slice(0, visibleCount);
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="no-results"><div class="no-results-icon">🔍</div><p>No vendors found. Try a different search or filter.</p></div>`;
+        document.getElementById('loadMoreWrap').style.display = 'none';
+        return;
+      }
+
+      grid.innerHTML = show.map(v => `
+        <div class="vdir-card" data-id="${v.id}">
+          <div class="vdir-card-header">
+            <div class="vdir-card-banner-placeholder ${BANNER_CLASSES[v.banner] || ''}"></div>
+            <div class="vdir-avatar-wrap">
+              <img class="vdir-avatar" src="${v.avatar}" alt="${v.name}" loading="lazy" />
+            </div>
+            ${v.verified ? `<div class="vdir-badge-check">✓ Verified</div>` : ''}
+          </div>
+          <div class="vdir-card-body">
+            <div class="vdir-name">${v.name}</div>
+            <div class="vdir-location">${v.location}</div>
+            <div class="vdir-category">${v.category}</div>
+            <div class="vdir-desc">${v.desc}</div>
+            <div class="vdir-stats-row">
+              <div class="vdir-stat"><span>${v.products}</span>Products</div>
+              <div class="vdir-stat"><span>${v.rating}</span>Rating</div>
+              <div class="vdir-stat"><span>${v.sales}</span>Sales</div>
+              <div class="vdir-tier"><span class="tier-badge ${TIER_CLASSES[v.tier]}">${v.tier}</span></div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      const loadBtn = document.getElementById('loadMoreBtn');
+      document.getElementById('loadMoreWrap').style.display = filtered.length > visibleCount ? 'block' : 'none';
+    }
+
+    function runSearch() {
+      searchQuery = document.getElementById('vendorSearch').value;
+      visibleCount = 12;
+      renderVendors();
+    }
+
+    // Filter pills
+    document.getElementById('filterBar').addEventListener('click', e => {
+      const pill = e.target.closest('.filter-pill');
+      if (!pill) return;
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      activeCategory = pill.dataset.cat;
+      visibleCount = 12;
+      renderVendors();
+    });
+
+    // Sort
+    document.getElementById('sortSelect').addEventListener('change', renderVendors);
+
+    // Search on Enter
+    document.getElementById('vendorSearch').addEventListener('keydown', e => {
+      if (e.key === 'Enter') runSearch();
+    });
+
+    // Load more
+    document.getElementById('loadMoreBtn').addEventListener('click', () => {
+      visibleCount += 6;
+      renderVendors();
+    });
+
+    renderVendors();
+  </script>
+</body>
+</html>
